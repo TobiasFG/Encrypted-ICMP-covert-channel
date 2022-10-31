@@ -14,8 +14,6 @@ def server():
     while True:
         # Receive the packet
         packet, source = _socket.recvfrom(65535)
-        if packet is not None:
-            print("received packet:" + str(packet) + " from " + str(source))
 
         # Extract the header from the packet
         header = packet[20:28]
